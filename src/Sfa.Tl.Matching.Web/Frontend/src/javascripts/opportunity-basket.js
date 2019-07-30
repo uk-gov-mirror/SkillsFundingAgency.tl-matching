@@ -2,6 +2,12 @@
 
 $('.tl-selectall').click(function () {
     $('.tl-checkbox').prop('checked', this.checked);
+    if ($(this).is(':checked')) {
+        $(".tl-table-clickable tbody tr").addClass("checked");
+    }
+    else {
+        $(".tl-table-clickable tbody tr").removeClass("checked");
+    }
 });
 
 
@@ -21,7 +27,7 @@ $(".tl-table-clickable tbody tr").click(function (e) {
         e.stopPropagation();
     }
 
-    else if (e.target.type == "checkbox") {
+    else if (e.target.type === "checkbox") {
         if ($(this).hasClass("checked")) {
             $(this).removeClass("checked");
         } else {
