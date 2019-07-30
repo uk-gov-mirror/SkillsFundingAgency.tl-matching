@@ -17,8 +17,16 @@ $(".tl-checkbox").change(function () {
 
 //Select entire table row
 $(".tl-table-clickable tbody tr").click(function (e) {
-    if (e.target.type == "checkbox" || $(e.target).is('a, a *')) {
+    if ($(e.target).is('a, a *')) {
         e.stopPropagation();
+    }
+
+    else if (e.target.type == "checkbox") {
+        if ($(this).hasClass("checked")) {
+            $(this).removeClass("checked");
+        } else {
+            $(this).addClass("checked");
+        }
     }
     else {
         if ($(this).hasClass("checked")) {
