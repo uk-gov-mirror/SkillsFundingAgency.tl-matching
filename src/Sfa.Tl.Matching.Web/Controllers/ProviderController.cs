@@ -199,10 +199,11 @@ namespace Sfa.Tl.Matching.Web.Controllers
         private ProviderSearchViewModel GetProviderSearchViewModel(ProviderSearchParametersViewModel searchParametersViewModel)
         {
             searchParametersViewModel.ShowAllProvider = true;
+            bool isAuthorisedUser = IsCurrentUserAnAdmin();
 
             return new ProviderSearchViewModel(searchParametersViewModel)
             {
-                IsAuthorisedUser = HttpContext.User.IsAuthorisedAdminUser(_configuration.AuthorisedAdminUserEmail)
+                IsAuthorisedUser = isAuthorisedUser
             };
         }
 
@@ -214,7 +215,7 @@ namespace Sfa.Tl.Matching.Web.Controllers
                 {
                     IsUkRlp = true
                 },
-                IsAuthorisedUser = HttpContext.User.IsAuthorisedAdminUser(_configuration.AuthorisedAdminUserEmail)
+                IsAuthorisedUser = IsCurrentUserAnAdmin()
             };
             viewModel.SearchResults.Results.Add(new ProviderSearchResultItemViewModel
             {
@@ -229,6 +230,24 @@ namespace Sfa.Tl.Matching.Web.Controllers
         private static bool IsValidProviderSearch(ProviderSearchResultDto searchResult)
         {
             return searchResult != null && searchResult.Id > 0;
+        }
+        private bool IsCurrentUserAnAdmin()
+        {
+            bool isAuthorisedUser = false;
+
+            string[] emails = _configuration.AuthorisedAdminUserEmail.Split(';');
+
+            foreach (var email in emails)
+            {
+                var isAuthorisedAdminUser = HttpContext.User.IsAuthorisedAdminUser(email);
+
+                if (isAuthorisedAdminUser)
+                {
+                    isAuthorisedUser = isAuthorisedAdminUser;
+                }
+            }
+
+            return isAuthorisedUser;
         }
     }
 }

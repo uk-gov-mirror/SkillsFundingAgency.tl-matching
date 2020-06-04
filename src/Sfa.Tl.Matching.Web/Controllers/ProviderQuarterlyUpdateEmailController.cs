@@ -28,7 +28,7 @@ namespace Sfa.Tl.Matching.Web.Controllers
         [Route("send-provider-email", Name = "ConfirmSendProviderEmail")]
         public async Task<IActionResult> ConfirmSendProviderEmailAsync()
         {
-            if (!HttpContext.User.IsAuthorisedAdminUser(_configuration.AuthorisedAdminUserEmail))
+            if (!IsCurrentUserAnAdmin())
             {
                 return RedirectToRoute("FailedLogin");
             }
@@ -41,7 +41,7 @@ namespace Sfa.Tl.Matching.Web.Controllers
         [Route("send-provider-email", Name = "SendProviderEmail")]
         public async Task<IActionResult> ConfirmSendProviderEmailAsync(ConfirmSendProviderEmailViewModel viewModel)
         {
-            if (!HttpContext.User.IsAuthorisedAdminUser(_configuration.AuthorisedAdminUserEmail))
+            if (!IsCurrentUserAnAdmin())
             {
                 return RedirectToRoute("FailedLogin");
             }
@@ -68,6 +68,25 @@ namespace Sfa.Tl.Matching.Web.Controllers
                 ProviderCount = count,
                 SendEmail = viewModel?.SendEmail
             };
+        }
+
+        private bool IsCurrentUserAnAdmin()
+        {
+            bool isAuthorisedUser = false;
+
+            string[] emails = _configuration.AuthorisedAdminUserEmail.Split(';');
+
+            foreach (var email in emails)
+            {
+                var isAuthorisedAdminUser = HttpContext.User.IsAuthorisedAdminUser(email);
+
+                if (isAuthorisedAdminUser)
+                {
+                    isAuthorisedUser = isAuthorisedAdminUser;
+                }
+            }
+
+            return isAuthorisedUser;
         }
     }
 }
