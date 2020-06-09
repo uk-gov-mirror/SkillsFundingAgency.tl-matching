@@ -199,7 +199,7 @@ namespace Sfa.Tl.Matching.Web.Controllers
         private ProviderSearchViewModel GetProviderSearchViewModel(ProviderSearchParametersViewModel searchParametersViewModel)
         {
             searchParametersViewModel.ShowAllProvider = true;
-            bool isAuthorisedUser = IsCurrentUserAnAdmin();
+            var isAuthorisedUser = IsCurrentUserAnAdmin();
 
             return new ProviderSearchViewModel(searchParametersViewModel)
             {
@@ -231,19 +231,18 @@ namespace Sfa.Tl.Matching.Web.Controllers
         {
             return searchResult != null && searchResult.Id > 0;
         }
+
         private bool IsCurrentUserAnAdmin()
         {
-            bool isAuthorisedUser = false;
+            var isAuthorisedUser = false;
 
-            string[] emails = _configuration.AuthorisedAdminUserEmail.Split(';');
-
-            foreach (var email in emails)
+            if (!string.IsNullOrWhiteSpace(_configuration.AuthorisedAdminUserEmail))
             {
-                var isAuthorisedAdminUser = HttpContext.User.IsAuthorisedAdminUser(email);
+                var emails = _configuration.AuthorisedAdminUserEmail?.Split(';');
 
-                if (isAuthorisedAdminUser)
+                foreach (var email in emails)
                 {
-                    isAuthorisedUser = isAuthorisedAdminUser;
+                    isAuthorisedUser |= HttpContext.User.IsAuthorisedAdminUser(email);
                 }
             }
 
